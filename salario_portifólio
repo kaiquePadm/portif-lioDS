@@ -1,0 +1,317 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  // Inicializa o aplicativo Flutter
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false, // Remove o banner "DEBUG"
+    home: MyApp(), // Define o widget principal do aplicativo
+    theme: ThemeData(primarySwatch: Colors.deepPurple), // Define o tema de cores do aplicativo
+  ));
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState(); // Cria o estado para a tela principal
+}
+
+class Aluno {
+  late double mensalidade; // Valor da mensalidade do aluno
+  late double desconto; // Desconto aplicado
+  late double aluno; // Tipo de aluno: 1 para pagante, 2 para bolsista parcial, 3 para bolsista integral
+  late double dia; // Dia de pagamento
+  late double mensalidadeFinal; // Valor final da mensalidade após descontos e juros
+  late double totalDesconto; // Valor total do desconto
+  late double juros; // Valor dos juros cobrados se houver atraso no pagamento
+
+  // Define a mensalidade
+  void setMensalidade(double m) {
+    mensalidade = m;
+  }
+
+  // Define o dia do pagamento
+  void setDia(double d) {
+    dia = d;
+  }
+
+  // Define o tipo de aluno (pagante, bolsista parcial ou integral)
+  void setAluno(double a) {
+    aluno = a;
+  }
+
+  // Calcula o desconto e juros com base no tipo de aluno e no dia do pagamento
+  void calcularDesconto() {
+    if (aluno == 3) {
+      // Bolsista integral não paga mensalidade
+      mensalidadeFinal = 0;
+      totalDesconto = mensalidade; // Todo valor da mensalidade é o desconto
+      juros = 0; // Não há juros para bolsistas integrais
+      return;
+    }
+
+    // Definindo desconto por dia de pagamento
+    double descontoDia = (dia >= 1 && dia <= 5)
+        ? 10 // Desconto de 10% para pagamentos entre os dias 1 e 5
+        : (dia >= 6 && dia <= 9)
+            ? 5 // Desconto de 5% para pagamentos entre os dias 6 e 9
+            : 0; // Sem desconto para pagamentos após o dia 9
+
+    // Definindo desconto por tipo de aluno (50% de desconto para bolsista parcial)
+    double descontoAluno = (aluno == 2) ? 0.50 : 0.00;
+
+    // Calcula o valor total do desconto
+    totalDesconto = mensalidade * descontoAluno + mensalidade * (descontoDia / 100);
+
+    // Calcula a mensalidade com o desconto aplicado
+    double mensalidadeComDesconto =
+        mensalidade * (1 - descontoAluno) * (1 - descontoDia / 100);
+
+    // Calcula os juros se o pagamento for realizado após o dia 10
+    juros = (dia > 10) ? (dia - 10) * 0.33 : 0; // R$0,33 de juros por dia de atraso
+
+    // Calcula a mensalidade final (mensalidade com desconto + juros)
+    mensalidadeFinal = mensalidadeComDesconto + juros;
+  }
+
+  // Métodos para retornar os valores calculados
+  double getMensalidadeFinal() => mensalidadeFinal;
+  double getTotalDesconto() => totalDesconto;
+  double getJuros() => juros;
+}
+
+class _MyAppState extends State<MyApp> {
+  // Controladores para os campos de entrada
+  final TextEditingController mensalidadeController = TextEditingController();
+  final TextEditingController diaController = TextEditingController();
+
+  // Tipo de aluno, iniciado como '1' (Pagante)
+  String tipoAluno = '1'; 
+
+  // Variáveis para armazenar o resultado final
+  double mensalidadeFinal = 0.0;
+  double totalDesconto = 0.0;
+  double juros = 0.0;
+  String mensagem = ''; // Mensagem de erro ou informações específicas
+
+  // Instância da classe Aluno
+  final aluno = Aluno();
+
+  // Função para calcular a mensalidade
+  void calcularMensalidade() {
+    // Converte os valores inseridos pelo usuário para double
+    final mensalidade = double.tryParse(mensalidadeController.text);
+    final dia = double.tryParse(diaController.text);
+    final tipo = double.tryParse(tipoAluno);
+
+    // Verifica se os valores inseridos são válidos
+    if (mensalidade != null && dia != null && tipo != null) {
+      // Define os valores na instância do aluno
+      aluno.setMensalidade(mensalidade);
+      aluno.setDia(dia);
+      aluno.setAluno(tipo);
+
+      // Realiza os cálculos
+      aluno.calcularDesconto();
+
+      // Atualiza o estado da interface com os novos valores calculados
+      setState(() {
+        mensalidadeFinal = aluno.getMensalidadeFinal();
+        totalDesconto = aluno.getTotalDesconto();
+        juros = aluno.getJuros();
+
+        // Exibe uma mensagem especial para o aluno integral (não paga mensalidade)
+        mensagem = tipo == 3
+            ? 'Você é bolsista integral e não precisa pagar mensalidade!'
+            : '';
+      });
+    } else {
+      // Caso algum campo não seja preenchido corretamente, exibe uma mensagem de erro
+      setState(() {
+        mensagem = 'Por favor, preencha todos os campos corretamente.';
+      });
+    }
+  }
+
+  // Função para mostrar informações adicionais sobre os tipos de aluno, descontos e juros
+  void mostrarInformacoes(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Informações'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Explicação sobre os tipos de aluno
+                Text(
+                  'Tipos de Aluno:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text('- Pagante: Paga o valor completo.'),
+                Text('- Bolsista Parcial: Recebe 50% de desconto na mensalidade.'),
+                Text('- Bolsista Integral: Não paga mensalidade.'),
+                SizedBox(height: 10),
+                // Explicação sobre os juros
+                Text(
+                  'Juros:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                    '- Se o pagamento for realizado após o dia 10, é cobrado R\$0,33 de juros por dia de atraso.'),
+                SizedBox(height: 10),
+                // Explicação sobre os descontos
+                Text(
+                  'Descontos:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                    '- Pagamento entre os dias 1 e 5: Desconto de 10%.\n- Pagamento entre os dias 6 e 9: Desconto de 5%.'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha o dialog
+              },
+              child: Text(
+                'Fechar',
+                style: TextStyle(color: Colors.deepPurple),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Cálculo de Mensalidade',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.deepPurple, // Cor da barra de navegação
+        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            children: [
+              // Exibe uma imagem de exemplo no topo da tela
+              Image.network(
+                'https://raw.githubusercontent.com/Yuri-Dev-OH/Dartpad.dev/refs/heads/main/aluno.png',
+                width: 120,
+                height: 120,
+              ),
+              SizedBox(height: 20),
+              // Texto explicativo sobre o que o aplicativo faz
+              Text(
+                'Calcule sua mensalidade com base no tipo de aluno e no dia do pagamento.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 16, color: Colors.deepPurple[600], fontFamily: 'Arial'),
+              ),
+              SizedBox(height: 20),
+              // Campos de entrada para mensalidade e dia de pagamento
+              _buildTextField(
+                controller: mensalidadeController,
+                label: 'Mensalidade',
+                hint: 'Insira o valor da mensalidade',
+                keyboardType: TextInputType.number,
+              ),
+              SizedBox(height: 16),
+              _buildTextField(
+                controller: diaController,
+                label: 'Dia de Pagamento',
+                hint: 'Insira o dia do pagamento',
+                keyboardType: TextInputType.number,
+              ),
+              SizedBox(height: 16),
+              // Dropdown para selecionar o tipo de aluno
+              DropdownButtonFormField<String>(
+                value: tipoAluno,
+                decoration: InputDecoration(
+                  labelText: 'Tipo de Aluno',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                items: [
+                  DropdownMenuItem(value: '1', child: Text('Pagante')),
+                  DropdownMenuItem(value: '2', child: Text('Bolsista Parcial')),
+                  DropdownMenuItem(value: '3', child: Text('Bolsista Integral')),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    tipoAluno = value!; // Atualiza o tipo de aluno
+                  });
+                },
+              ),
+              SizedBox(height: 20),
+              // Botão para calcular a mensalidade
+              ElevatedButton(
+                onPressed: calcularMensalidade,
+                child: Text('Calcular'),
+              ),
+              SizedBox(height: 20),
+              // Exibe a mensagem de erro ou informações
+              if (mensagem.isNotEmpty)
+                Text(
+                  mensagem,
+                  style: TextStyle(fontSize: 18, color: Colors.red),
+                ),
+              SizedBox(height: 20),
+              // Exibe os resultados calculados (desconto, juros e mensalidade final)
+              if (mensalidadeFinal > 0)
+                Column(
+                  children: [
+                    Text(
+                      'Total de Desconto: R\$${totalDesconto.toStringAsFixed(2)}',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    Text(
+                      'Juros: R\$${juros.toStringAsFixed(2)}',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    Text(
+                      'Mensalidade Final: R\$${mensalidadeFinal.toStringAsFixed(2)}',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ],
+                ),
+              // Botão para exibir informações sobre o cálculo
+              ElevatedButton(
+                onPressed: () => mostrarInformacoes(context),
+                child: Text('Informações'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Função auxiliar para criar campos de texto
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required TextInputType keyboardType,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
+}
