@@ -191,9 +191,10 @@ class _LivroAppState extends State<LivroApp> {
           children: [
             // Exibe a logo do aplicativo
             Image.network(
-              'https://raw.githubusercontent.com/Yuri-Dev-OH/Dartpad.dev/refs/heads/main/logo%20livro.png',
+              'https://raw.githubusercontent.com/kaiquePadm/portif-lioDS/refs/heads/main/logo%20livro%20remaster%20requiem%20overheaven.png?token=GHSAT0AAAAAAC3QN4XQZCPQUUKRD4OWO6PWZ2SHGWQ',
               width: 120,
-              height: 120,
+              height: 120
+             ,
             ),
             SizedBox(height: 10),
 
