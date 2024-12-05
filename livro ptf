@@ -1,0 +1,343 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false, // Desativa o banner de debug
+    home: LivroApp(), // A tela principal do aplicativo
+    theme: ThemeData(primarySwatch: Colors.orange), // Define o tema do aplicativo com a cor laranja
+  ));
+}
+
+// Classe que representa os livros ou mangás
+class Livro {
+  String titulo; // Título do livro/mangá
+  String autor; // Autor do livro/mangá
+  int anoPublicacao; // Ano de publicação
+  String editora; // Editora do livro/mangá
+  double precoDeCusto; // Preço de custo do livro/mangá
+  double precoDeVenda; // Preço de venda do livro/mangá
+  int vendas; // Número de vendas
+  double lucro; // Lucro total, calculado com base nas vendas
+  String genero; // Gênero do livro/mangá (ex: Fantasia, Romance)
+  String imagemUrl; // URL da imagem do livro/mangá
+
+  // Construtor que inicializa todos os campos
+  Livro({
+    required this.titulo,
+    required this.autor,
+    required this.anoPublicacao,
+    required this.editora,
+    required this.precoDeCusto,
+    required this.precoDeVenda,
+    required this.vendas,
+    required this.lucro,
+    required this.genero,
+    required this.imagemUrl,
+  });
+
+  // Método para calcular o lucro total (lucro por unidade * número de vendas)
+  void calcularLucroTotal() {
+    lucro = calcularLucroPorUnidade() * vendas;
+  }
+
+  // Método para calcular o lucro por unidade (preço de venda - preço de custo)
+  double calcularLucroPorUnidade() {
+    return precoDeVenda - precoDeCusto;
+  }
+}
+
+// Classe do aplicativo
+class LivroApp extends StatefulWidget {
+  @override
+  _LivroAppState createState() => _LivroAppState();
+}
+
+class _LivroAppState extends State<LivroApp> {
+  // Lista de livros
+  List<Livro> livros = [
+    Livro(
+      titulo: "O Senhor dos Anéis",
+      autor: "J.R.R. Tolkien",
+      anoPublicacao: 1954,
+      editora: "HarperCollins",
+      precoDeCusto: 25.0,
+      precoDeVenda: 50.0,
+      vendas: 200,
+      lucro: 0.0,
+      genero: "Fantasia",
+      imagemUrl: 'https://raw.githubusercontent.com/Yuri-Dev-OH/Dartpad.dev/refs/heads/main/senhor%20dos%20aneis.jpg',
+    ),
+    Livro(
+      titulo: "Crepúsculo",
+      autor: "Stephenie Meyer",
+      anoPublicacao: 2005,
+      editora: "Grupo Editorial Record",
+      precoDeCusto: 18.0,
+      precoDeVenda: 35.0,
+      vendas: 350,
+      lucro: 0.0,
+      genero: "Romance",
+      imagemUrl: 'https://raw.githubusercontent.com/Yuri-Dev-OH/Dartpad.dev/refs/heads/main/crepusculo.jpg',
+    ),
+    Livro(
+      titulo: "Diário de um Banana",
+      autor: "Jeff Kinney",
+      anoPublicacao: 2007,
+      editora: "Editora Vergara & Riba",
+      precoDeCusto: 12.0,
+      precoDeVenda: 25.0,
+      vendas: 500,
+      lucro: 0.0,
+      genero: "Infantil",
+      imagemUrl: 'https://raw.githubusercontent.com/Yuri-Dev-OH/Dartpad.dev/refs/heads/main/diario%20de%20um%20banana.jpg',
+    ),
+  ];
+
+  // Lista de mangás
+  List<Livro> mangas = [
+    Livro(
+      titulo: "Dragon Ball",
+      autor: "Akira Toriyama",
+      anoPublicacao: 1984,
+      editora: "Shueisha",
+      precoDeCusto: 8.0,
+      precoDeVenda: 18.0,
+      vendas: 250,
+      lucro: 0.0,
+      genero: "Ação",
+      imagemUrl: 'https://raw.githubusercontent.com/Yuri-Dev-OH/Dartpad.dev/refs/heads/main/goku.jpg',
+    ),
+    Livro(
+      titulo: "Naruto",
+      autor: "Masashi Kishimoto",
+      anoPublicacao: 1999,
+      editora: "Shueisha",
+      precoDeCusto: 8.0,
+      precoDeVenda: 18.0,
+      vendas: 250,
+      lucro: 0.0,
+      genero: "Ação",
+      imagemUrl: 'https://raw.githubusercontent.com/Yuri-Dev-OH/Dartpad.dev/refs/heads/main/naruto.jpg',
+    ),
+    Livro(
+      titulo: "JoJo's Bizarre Adventure",
+      autor: "Hirohiko Araki",
+      anoPublicacao: 1987,
+      editora: "Shueisha",
+      precoDeCusto: 9.0,
+      precoDeVenda: 19.0,
+      vendas: 220,
+      lucro: 0.0,
+      genero: "Aventura",
+      imagemUrl: 'https://raw.githubusercontent.com/Yuri-Dev-OH/Dartpad.dev/refs/heads/main/jojo%20livro.jpg',
+    ),
+  ];
+
+  // Função que exibe os detalhes do livro ou mangá em um modal
+  void _showBookDetails(Livro livro) {
+    livro.calcularLucroTotal(); // Calcula o lucro total
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(livro.titulo), // Título do livro/mangá
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.network(
+                livro.imagemUrl, // Exibe a imagem do livro/mangá
+                height: 135,
+                width: 135,
+                fit: BoxFit.cover,
+              ),
+              SizedBox(height: 16),
+              Text('Autor: ${livro.autor}'), // Autor
+              Text('Ano: ${livro.anoPublicacao}'), // Ano de publicação
+              Text('Editora: ${livro.editora}'), // Editora
+              Text('Gênero: ${livro.genero}'), // Gênero
+              Text('Preço de custo: R\$${livro.precoDeCusto.toStringAsFixed(2)}'), // Preço de custo
+              Text('Preço de venda: R\$${livro.precoDeVenda.toStringAsFixed(2)}'), // Preço de venda
+              Text('Número de vendas: ${livro.vendas}'), // Número de vendas
+              Text(
+                'Lucro: R\$${livro.lucro.toStringAsFixed(2)}', // Lucro
+                style: TextStyle(color: Colors.green), // Exibe o lucro em verde
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: Text('Fechar'), // Botão para fechar o modal
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha o modal
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Livros e Mangás', style: TextStyle(fontSize: 20)), // Título da barra de navegação
+        backgroundColor: Colors.orange, // Cor do appBar
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // Exibe a logo do aplicativo
+            Image.network(
+              'https://raw.githubusercontent.com/Yuri-Dev-OH/Dartpad.dev/refs/heads/main/logo%20livro.png',
+              width: 120,
+              height: 120,
+            ),
+            SizedBox(height: 10),
+
+            // Título e subtítulo
+            Column(
+              children: [
+                Text(
+                  'Bem-vindo ao Mundo dos Livros!',
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  'Explore e descubra novos títulos!',
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 20),
+
+            // Categoria "Livro" com ícone
+            Row(
+              children: [
+                Icon(Icons.book, color: Colors.red, size: 30),
+                SizedBox(width: 8),
+                Text(
+                  'Livro',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.red),
+                ),
+              ],
+            ),
+
+            // Grid de livros
+            GridView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, // 3 colunas
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 0.65, // Proporção da célula
+              ),
+              itemCount: livros.length, // Quantidade de livros
+              itemBuilder: (context, index) {
+                final livro = livros[index];
+                return GestureDetector(
+                  onTap: () => _showBookDetails(livro), // Exibe os detalhes ao clicar
+                  child: MouseRegion(
+                    onEnter: (_) => setState(() {}),
+                    onExit: (_) => setState(() {}),
+                    child: Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      color: Colors.red.shade100, // Cor de fundo do cartão
+                      child: Column(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              livro.imagemUrl, // Exibe a imagem do livro
+                              height: 274,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            livro.titulo, // Título do livro
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+            SizedBox(height: 30), 
+            // Categoria "Mangá"
+            Row(
+              children: [
+                Text(
+                  '日', // Símbolo japonês de "sol"
+                  style: TextStyle(fontSize: 30, color: Colors.orange),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  'Mangá',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.orange),
+                ),
+              ],
+            ),
+            // Grid de mangás
+            GridView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, // 3 colunas
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 0.65, // Proporção da célula
+              ),
+              itemCount: mangas.length, // Quantidade de mangás
+              itemBuilder: (context, index) {
+                final manga = mangas[index];
+                return GestureDetector(
+                  onTap: () => _showBookDetails(manga), // Exibe os detalhes ao clicar
+                  child: MouseRegion(
+                    onEnter: (_) => setState(() {}),
+                    onExit: (_) => setState(() {}),
+                    child: Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      color: Colors.orange.shade100, // Cor de fundo do cartão
+                      child: Column(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              manga.imagemUrl, // Exibe a imagem do mangá
+                              height: 274,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            manga.titulo, // Título do mangá
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
