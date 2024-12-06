@@ -1,10 +1,11 @@
+
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false, // Desativa o banner de debug
     home: LivroApp(), // A tela principal do aplicativo
-    theme: ThemeData(primarySwatch: Colors.orange), // Define o tema do aplicativo com a cor laranja
+    theme: ThemeData(primarySwatch: Colors.blue), // Define o tema do aplicativo com a cor laranja
   ));
 }
 
@@ -183,7 +184,7 @@ class _LivroAppState extends State<LivroApp> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Livros e Mangás', style: TextStyle(fontSize: 20)), // Título da barra de navegação
-        backgroundColor: Colors.orange, // Cor do appBar
+        backgroundColor: Colors.purple, // Cor do appBar
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
@@ -218,11 +219,11 @@ class _LivroAppState extends State<LivroApp> {
             // Categoria "Livro" com ícone
             Row(
               children: [
-                Icon(Icons.book, color: Colors.red, size: 30),
+                Icon(Icons.book, color: Colors.purple, size: 30),
                 SizedBox(width: 8),
                 Text(
                   'Livro',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.red),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.purple),
                 ),
               ],
             ),
@@ -250,7 +251,7 @@ class _LivroAppState extends State<LivroApp> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      color: Colors.red.shade100, // Cor de fundo do cartão
+                      color: Colors.purple.shade100, // Cor de fundo do cartão
                       child: Column(
                         children: [
                           ClipRRect(
@@ -280,12 +281,12 @@ class _LivroAppState extends State<LivroApp> {
               children: [
                 Text(
                   '日', // Símbolo japonês de "sol"
-                  style: TextStyle(fontSize: 30, color: Colors.orange),
+                  style: TextStyle(fontSize: 30, color: Colors.purple),
                 ),
                 SizedBox(width: 8),
                 Text(
                   'Mangá',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.orange),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.purple),
                 ),
               ],
             ),
@@ -312,7 +313,7 @@ class _LivroAppState extends State<LivroApp> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      color: Colors.orange.shade100, // Cor de fundo do cartão
+                      color: Colors.purple.shade100, // Cor de fundo do cartão
                       child: Column(
                         children: [
                           ClipRRect(
